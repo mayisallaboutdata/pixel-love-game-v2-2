@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>💝 Pixel Love Game</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+  />
+  <link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════
+       CUSTOMIZER SCREEN  (shown first, every time)
+  ══════════════════════════════════════════════════════════ -->
+  <div id="customizerScreen" class="screen">
+
+    <!-- Left: controls -->
+    <div id="custLeft">
+
+      <div id="custHeader">
+        <h1>✏ CUSTOMIZE YOUR GAME</h1>
+        <p>Settings are saved in your browser automatically.</p>
+      </div>
+
+      <div id="custTabNav">
+        <!-- Populated by customizer.js -->
+      </div>
+
+      <div id="custPanel">
+        <!-- Populated by customizer.js -->
+      </div>
+
+      <div id="custFooter">
+        <button class="pixel-btn" id="custStartBtn">♥ START GAME ♥</button>
+      </div>
+
+    </div>
+
+    <!-- Right: live preview -->
+    <div id="custRight">
+      <div id="custPreviewLabel">LIVE PREVIEW</div>
+      <canvas id="custPreviewCanvas" width="180" height="240"></canvas>
+      <div id="custPreviewHint">
+        Switch tabs to preview<br>each character live.
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       INTRO SCREEN
+  ══════════════════════════════════════════════════════════ -->
+  <div id="intro" class="screen">
+    <div class="pixel-title">HAPPY<br>VALENTINE'S DAY</div>
+
+    <div class="pixel-hearts-deco">
+      <span>♥</span>
+      <span style="color:#ffd700">♥</span>
+      <span>♥</span>
+    </div>
+
+    <div class="screen-text" id="playerSubtitle">A little game made with love for</div>
+    <div class="name-glow" id="playerNameDisplay">???</div>
+
+    <button class="pixel-btn" id="playBtn">♥ PLAY ♥</button>
+
+    <div class="instruction" id="instructionText">
+      SLIDE YOUR FINGER<br>TO CATCH HEARTS
+    </div>
+
+    <!-- Re-open customizer from the intro -->
+    <button class="cust-reopen-btn" id="reopenCustBtn" title="Customize">✏ Edit</button>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       HUD
+  ══════════════════════════════════════════════════════════ -->
+  <div id="hud">
+    <div class="hud-item">♥ <span id="scoreDisplay">0</span></div>
+    <div class="hud-item">GOAL: <span id="goalDisplay">100</span></div>
+    <div class="hud-item"><span id="timerDisplay">45</span>s</div>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       GAME CANVAS
+  ══════════════════════════════════════════════════════════ -->
+  <canvas id="gameCanvas"></canvas>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       HUG SCENE OVERLAY
+  ══════════════════════════════════════════════════════════ -->
+  <canvas id="hug-canvas"></canvas>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       WIN SCREEN
+  ══════════════════════════════════════════════════════════ -->
+  <div id="winScreen" class="screen">
+    <div class="pixel-title">YOU DID IT!</div>
+
+    <div class="pixel-hearts-deco">
+      <span>♥</span>
+      <span style="color:#ffd700">♥</span>
+      <span style="color:#ff4a6e">♥</span>
+      <span style="color:#ffd700">♥</span>
+      <span>♥</span>
+    </div>
+
+    <div class="final-score-num" id="winScore">100</div>
+    <div class="screen-text">hearts caught!</div>
+    <div class="love-message" id="winMsg"></div>
+
+    <button class="pixel-btn" id="winPlayAgainBtn">PLAY AGAIN ♥</button>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       LOSE SCREEN
+  ══════════════════════════════════════════════════════════ -->
+  <div id="loseScreen" class="screen">
+    <div class="pixel-title">TIME'S UP!</div>
+
+    <div class="final-score-num" id="loseScore">0</div>
+    <div class="screen-text">hearts caught</div>
+    <div class="love-message" id="loseMsg"></div>
+
+    <button class="pixel-btn" id="losePlayAgainBtn">TRY AGAIN ♥</button>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       PAUSE MENU (ESC during gameplay)
+  ══════════════════════════════════════════════════════════ -->
+  <div class="pause-menu" id="pauseMenu">
+    <div class="pause-content">
+      <div class="pause-title">⏸ PAUSED</div>
+      
+      <button class="pixel-btn pause-btn" id="pauseResumeBtn">RESUME</button>
+      <button class="pixel-btn pause-btn" id="pauseRestartBtn">RESTART</button>
+      <button class="pixel-btn pause-btn" id="pauseMainMenuBtn">MAIN MENU</button>
+      
+      <div class="pause-hint">Press ESC to resume</div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       SETTINGS BUTTON & MODAL
+  ══════════════════════════════════════════════════════════ -->
+  <button class="settings-btn" id="settingsBtn" title="Settings">⚙</button>
+
+  <div class="settings-modal" id="settingsModal">
+    <div class="settings-content">
+      <div class="settings-header">⚙ SETTINGS</div>
+
+      <div class="settings-row">
+        <div class="settings-label">Music</div>
+        <div class="settings-toggle" id="musicToggle">
+          <div class="settings-toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="settings-info-section">
+        <div class="settings-section-title">🎮 CONTROLS</div>
+        <div class="settings-info-text">
+          <strong>Mouse / Touch:</strong> Move to catch hearts<br>
+          <strong>ESC:</strong> Pause game
+        </div>
+      </div>
+
+      <button class="pixel-btn settings-close-btn" id="settingsCloseBtn">CLOSE</button>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+       SCRIPTS  (load order matters)
+  ══════════════════════════════════════════════════════════ -->
+  <script src="config/game.config.js"></script>
+  <script src="src/renderer.js"></script>
+  <script src="src/ui.js"></script>
+  <script src="src/hug-scene.js"></script>
+  <script src="src/game.js"></script>
+  <script src="src/customizer.js"></script>
+  <script src="src/music.js"></script>
+  <script src="src/main.js"></script>
+
+</body>
+</html>

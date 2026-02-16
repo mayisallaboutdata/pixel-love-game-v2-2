@@ -1,0 +1,771 @@
+/* ============================================================
+   style.css
+   Pixel Love Game — All visual styles
+   ============================================================ */
+
+/* ── Reset & Base ──────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+  background: var(--bg);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  position: fixed;
+  inset: 0;
+}
+
+/* ── CSS Variables ─────────────────────────────────────────── */
+:root {
+  --bg:          #1a0a1e;
+  --accent:      #ff4a6e;
+  --accent-dark: #8b0030;
+  --gold:        #ffd700;
+  --gold-dark:   #b8860b;
+  --text-soft:   #e8a0b4;
+  --text-light:  #ffb6c8;
+  --hud-bg:      rgba(26, 10, 30, 0.85);
+}
+
+/* ── Canvas elements ───────────────────────────────────────── */
+canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#gameCanvas {
+  cursor: none; /* Hide cursor during gameplay */
+}
+
+/* ── Screens ───────────────────────────────────────────────── */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  background: var(--bg);
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ── Typography ────────────────────────────────────────────── */
+.pixel-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(14px, 4vw, 24px);
+  color: var(--accent);
+  text-shadow: 3px 3px 0 var(--accent-dark);
+  margin-bottom: 8px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.screen-text {
+  font-size: clamp(14px, 3.5vw, 18px);
+  color: var(--text-soft);
+  text-align: center;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  max-width: 340px;
+}
+
+.name-glow {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(20px, 6vw, 36px);
+  color: var(--gold);
+  text-shadow:
+    0 0 20px rgba(255, 215, 0, 0.6),
+    3px 3px 0 var(--gold-dark);
+  margin: 15px 0 25px;
+  animation: pixelPulse 1.5s ease-in-out infinite;
+}
+
+.final-score-num {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(28px, 8vw, 48px);
+  color: var(--gold);
+  text-shadow: 3px 3px 0 var(--gold-dark);
+  margin: 10px 0;
+}
+
+.love-message {
+  font-size: clamp(14px, 3.5vw, 18px);
+  color: var(--text-light);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.7;
+  margin: 15px 0 25px;
+  font-style: italic;
+  white-space: pre-line;
+}
+
+.instruction {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(7px, 1.8vw, 10px);
+  color: #885566;
+  margin-top: 18px;
+  text-align: center;
+  line-height: 1.8;
+  opacity: 0.7;
+  white-space: pre-line;
+}
+
+/* ── Decorative hearts row ──────────────────────────────────── */
+.pixel-hearts-deco {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  font-size: 20px;
+  animation: pixelPulse 2s ease-in-out infinite;
+}
+
+/* ── Pixel button ───────────────────────────────────────────── */
+.pixel-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(10px, 2.5vw, 14px);
+  padding: 14px 28px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow:
+    0 4px 0 var(--accent-dark),
+    0 6px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.1s, box-shadow 0.1s;
+  image-rendering: pixelated;
+  position: relative;
+}
+
+.pixel-btn::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 4px solid var(--accent);
+  pointer-events: none;
+}
+
+.pixel-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 0 var(--accent-dark),
+    0 8px 12px rgba(0, 0, 0, 0.35);
+}
+
+.pixel-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--accent-dark);
+}
+
+/* ── HUD ────────────────────────────────────────────────────── */
+#hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 16px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  background: var(--hud-bg);
+  border-bottom: 3px solid var(--accent);
+}
+
+.hud-item {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(9px, 2.2vw, 13px);
+  color: var(--accent);
+}
+
+.hud-item span {
+  color: var(--gold);
+}
+
+/* ── Progress bar ───────────────────────────────────────────── */
+.progress-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #2a0a2e;
+  z-index: 10;
+  display: none;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  width: 0%;
+  transition: width 0.3s;
+}
+
+/* ── Hug canvas overlay ─────────────────────────────────────── */
+#hug-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  display: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes pixelPulse {
+  0%, 100% { transform: scale(1);    }
+  50%       { transform: scale(1.05); }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   CUSTOMIZER SCREEN
+   ════════════════════════════════════════════════════════════ */
+
+#customizerScreen {
+  display: none;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  z-index: 200;
+  background: #0d0613;
+  overflow: hidden;
+}
+
+#customizerScreen.active {
+  display: flex;
+}
+
+/* ── Left panel: controls ───────────────────────────────── */
+#custLeft {
+  width: 55%;
+  max-width: 460px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  border-right: 3px solid #2a1a3e;
+  overflow: hidden;
+}
+
+/* Header */
+#custHeader {
+  padding: 14px 20px 10px;
+  border-bottom: 3px solid #2a1a3e;
+  flex-shrink: 0;
+}
+
+#custHeader h1 {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(9px, 2vw, 13px);
+  color: var(--accent);
+  text-shadow: 2px 2px 0 var(--accent-dark);
+  line-height: 1.5;
+}
+
+#custHeader p {
+  font-size: 11px;
+  color: #886;
+  margin-top: 4px;
+}
+
+/* Tab nav */
+#custTabNav {
+  display: flex;
+  gap: 0;
+  border-bottom: 3px solid #2a1a3e;
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+#custTabNav::-webkit-scrollbar { display: none; }
+
+.cust-tab-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(7px, 1.5vw, 9px);
+  padding: 10px 12px;
+  background: transparent;
+  color: #665577;
+  border: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -3px;
+  white-space: nowrap;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.cust-tab-btn:hover  { color: #cc88aa; }
+.cust-tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Scrollable panel */
+#custPanel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: #3a1a4e #0d0613;
+}
+
+#custPanel::-webkit-scrollbar       { width: 6px; }
+#custPanel::-webkit-scrollbar-track { background: #0d0613; }
+#custPanel::-webkit-scrollbar-thumb { background: #3a1a4e; border-radius: 3px; }
+
+/* Section */
+.cust-section {
+  margin-bottom: 18px;
+}
+
+.cust-section-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: #9966aa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #2a1a3e;
+}
+
+/* Fields */
+.cust-field {
+  margin-bottom: 10px;
+}
+
+.cust-label {
+  display: block;
+  font-size: 11px;
+  color: #cc99bb;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.cust-hint {
+  display: block;
+  font-size: 10px;
+  color: #665577;
+  margin-bottom: 4px;
+  font-style: italic;
+}
+
+.cust-input {
+  width: 100%;
+  background: #1a0a2a;
+  border: 2px solid #3a1a4e;
+  color: #e8c0d8;
+  font-size: 12px;
+  padding: 7px 10px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cust-input:focus {
+  border-color: var(--accent);
+}
+
+.cust-textarea {
+  resize: vertical;
+  min-height: 58px;
+  line-height: 1.5;
+}
+
+.cust-number {
+  width: 90px;
+  text-align: center;
+}
+
+/* Color row */
+.cust-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Colored swatch — a <label> pointing at the hidden picker */
+.cust-swatch {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #3a1a4e;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.cust-swatch:hover {
+  border-color: var(--accent);
+}
+
+/* The native color input — occupies no visual space but stays
+   interactive so the OS color picker opens via the <label> */
+/* Visually hidden but still interactive — pointer-events must
+   remain enabled so the <label> click can reach the input */
+.cust-color-hidden {
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  position: absolute;
+}
+
+.cust-hex {
+  font-size: 11px;
+  color: #9977aa;
+  font-family: monospace;
+}
+
+/* Range row */
+.cust-range-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cust-range {
+  flex: 1;
+  accent-color: var(--accent);
+  height: 4px;
+}
+
+.cust-range-val {
+  font-size: 11px;
+  color: var(--gold);
+  font-family: "Press Start 2P", monospace;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Footer / CTA */
+#custFooter {
+  padding: 14px 16px;
+  border-top: 3px solid #2a1a3e;
+  flex-shrink: 0;
+}
+
+#custStartBtn {
+  width: 100%;
+}
+
+/* ── Right panel: live preview ──────────────────────────── */
+#custRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  gap: 12px;
+  background: #0a0510;
+  position: relative;
+}
+
+#custPreviewLabel {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: #665577;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+#custPreviewCanvas {
+  width: 100%;
+  max-width: 240px;
+  aspect-ratio: 3/4;
+  border: 3px solid #2a1a3e;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#custPreviewHint {
+  font-size: 10px;
+  color: #554466;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 200px;
+}
+
+/* ── Responsive: stack vertically on narrow screens ─────── */
+@media (max-width: 540px) {
+  #customizerScreen {
+    flex-direction: column-reverse;
+  }
+
+  #custLeft {
+    width: 100%;
+    max-width: 100%;
+    border-right: none;
+    border-top: 3px solid #2a1a3e;
+  }
+
+  #custRight {
+    flex-direction: row;
+    padding: 10px 16px;
+    gap: 12px;
+    flex-shrink: 0;
+    min-height: 120px;
+  }
+
+  #custPreviewCanvas {
+    max-width: 90px;
+    aspect-ratio: 3/4;
+  }
+
+  #custPreviewLabel,
+  #custPreviewHint {
+    font-size: 9px;
+  }
+}
+
+/* ── Re-open customizer button (on intro screen) ─────────── */
+.cust-reopen-btn {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  color: #665577;
+  border: 2px solid #2a1a3e;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.cust-reopen-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Hairstyle picker grid ───────────────────────────────── */
+.cust-hair-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.cust-hair-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  padding: 7px 10px;
+  background: #1a0a2a;
+  color: #886699;
+  border: 2px solid #3a1a4e;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  line-height: 1;
+}
+
+.cust-hair-btn:hover {
+  color: #cc99cc;
+  border-color: #6a3a7e;
+}
+
+/* ── Settings button (floating, top-right) ───────────────────── */
+.settings-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  background: rgba(26, 10, 30, 0.85);
+  border: 2px solid #3a1a4e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 150;
+  transition: border-color 0.15s, background 0.15s;
+  font-size: 20px;
+}
+
+.settings-btn:hover {
+  border-color: var(--accent);
+  background: rgba(40, 15, 50, 0.95);
+}
+
+/* Hide settings button on customizer screen */
+#customizerScreen.active ~ .settings-btn {
+  display: none;
+}
+
+/* ── Settings modal overlay ────────────────────────────────── */
+.settings-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 15, 0.92);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.settings-modal.active {
+  display: flex;
+}
+
+.settings-content {
+  background: #1a0a2e;
+  border: 3px solid #3a1a4e;
+  padding: 24px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.settings-header {
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  color: var(--accent);
+  text-shadow: 2px 2px 0 var(--accent-dark);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #2a1a3e;
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-label {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: #cc99bb;
+}
+
+.settings-toggle {
+  width: 50px;
+  height: 26px;
+  background: #2a1a3e;
+  border: 2px solid #3a1a4e;
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-toggle.on {
+  background: var(--accent);
+  border-color: var(--accent-dark);
+}
+
+.settings-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.settings-toggle.on .settings-toggle-knob {
+  transform: translateX(24px);
+}
+
+.settings-close-btn {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.settings-info-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid #2a1a3e;
+}
+
+.settings-section-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--gold);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.settings-info-text {
+  font-size: 11px;
+  color: #aa88bb;
+  line-height: 1.8;
+  text-align: left;
+}
+
+.settings-info-text strong {
+  color: var(--accent);
+  font-weight: normal;
+}
+
+/* ── Pause Menu ──────────────────────────────────────────────── */
+.pause-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 15, 0.95);
+  z-index: 250;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.pause-menu.active {
+  display: flex;
+}
+
+.pause-content {
+  background: #1a0a2e;
+  border: 4px solid var(--accent);
+  padding: 30px 24px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+}
+
+.pause-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(14px, 4vw, 18px);
+  color: var(--gold);
+  text-shadow: 3px 3px 0 var(--gold-dark);
+  margin-bottom: 24px;
+  animation: pixelPulse 2s ease-in-out infinite;
+}
+
+.pause-btn {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.pause-hint {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: #665577;
+  margin-top: 16px;
+  opacity: 0.7;
+}
+
+
