@@ -222,7 +222,8 @@ npx serve .
 
 ## 📸 Screenshots
 
-> *(Add your own screenshots here!)*
+> *(<img width="2932" height="1432" alt="image" src="https://github.com/user-attachments/assets/63b04933-23b0-4836-94b3-861a2cd090d2" />
+)*
 
 ---
 
